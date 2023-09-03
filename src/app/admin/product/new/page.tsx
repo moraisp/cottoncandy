@@ -1,23 +1,62 @@
-import prisma from '@/lib/prisma'; 
-import { redirect } from 'next/navigation'
-import { SubmitButton } from './submit';
+import prisma from "@/lib/prisma";
+import { redirect } from "next/navigation";
+import { SubmitButton } from "@/utils/submit";
+import { Prisma } from "@prisma/client";
+import Stock from "./stock";
+import set from "lodash/set";
 
 export default function NewProduct() {
-    async function create(formData: FormData) {
-        'use server'
-        
-        await prisma.product.create({
-             data: {
-                name: formData.get('name') as string,
-                price: Number(formData.get('price')),
-                stock: Number(formData.get('stock')),
-                description: formData.get('description') as string,
-             }
-        });
-        console.log('created')
-        redirect('/admin/product');
-      }
+  async function create(formData: FormData) {
+    "use server";
+    const data = {} as any;
+    formData.forEach(function (value, key) {
+      set(data, key, value);
+    });
+    console.log(data);
+    const images = formData.getAll("image") as File[];
 
+    const productImages: Prisma.ProductImageCreateManyProductInput[] =
+      await Promise.all(
+        images
+          .filter((x) => x.size)
+          .map(
+            async (image) =>
+              ({
+                blob: Buffer.from(await image.arrayBuffer()),
+              } satisfies Prisma.ProductImageCreateManyProductInput)
+          )
+      );
+
+    const productStocks: Prisma.ProductStockCreateManyProductInput[] =
+      data.stock.map(
+        (stock: any) =>
+          ({
+            size: stock.size,
+            quantity: Number(stock.quantity),
+            soldQuantity: 0,
+          } satisfies Prisma.ProductStockCreateManyProductInput)
+      );
+
+    await prisma.product.create({
+      data: {
+        name: data.name,
+        code: data.code,
+        price: Number(data.price),
+        description: data.description,
+        ProductStock: {
+          createMany: {
+            data: productStocks,
+          },
+        },
+        ProductImage: {
+          createMany: {
+            data: productImages,
+          },
+        },
+      },
+    });
+    redirect("/admin/product");
+  }
 
   return (
     <main>
@@ -34,7 +73,16 @@ export default function NewProduct() {
             <div>
               <label className="font-medium">Nome</label>
               <input
-                name='name'
+                name="name"
+                type="text"
+                required
+                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
+              />
+            </div>
+            <div>
+              <label className="font-medium">Código</label>
+              <input
+                name="code"
                 type="text"
                 required
                 className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
@@ -43,28 +91,33 @@ export default function NewProduct() {
             <div>
               <label className="font-medium">Preço</label>
               <input
-                name='price'
+                name="price"
                 type="number"
+                step={0.01}
                 required
                 className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
               />
             </div>
-            <div>
-            <label className="font-medium">Estoque</label>
-            <input
-              name='stock'
-              type="number"
-              required
-              className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
-            />
-          </div>
           </div>
           <div>
             <label className="font-medium">Descrição</label>
             <textarea
-              name='description'
+              name="description"
               className="w-full mt-2 h-36 px-3 py-2 resize-none appearance-none bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
             ></textarea>
+          </div>
+          <div>
+            <label className="font-medium">Estoque</label>
+            <Stock />
+          </div>
+          <div>
+            <label className="font-medium">Imagem</label>
+            <input
+              name="image"
+              type="file"
+              multiple
+              className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
+            />
           </div>
           <SubmitButton></SubmitButton>
         </form>

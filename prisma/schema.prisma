@@ -6,22 +6,53 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("POSTGRES_PRISMA_URL")
+  provider          = "postgresql"
+  url               = env("POSTGRES_PRISMA_URL")
   shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING")
   directUrl         = env("POSTGRES_URL_NON_POOLING")
 }
 
-
 model Product {
-  id          Int      @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   name        String
   description String?
-  price       Int
-  image       String?
-  stock       Int
-  isActive   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  deletedAt   DateTime?
+  code        String  @unique
+  price       Float
+
+  validUntil DateTime?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  ProductImage ProductImage[]
+  ProductStock ProductStock[]
+}
+
+model ProductImage {
+  id        Int   @id @default(autoincrement())
+  productId Int
+  blob      Bytes
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  Product Product @relation(fields: [productId], references: [id])
+}
+
+model ProductStock {
+  id        Int @id @default(autoincrement())
+  productId Int
+
+  size String
+
+  quantity     Int
+  soldQuantity Int
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  Product Product @relation(fields: [productId], references: [id])
 }
