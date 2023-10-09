@@ -1,10 +1,8 @@
 "use client";
-import { Prisma } from "@prisma/client";
 import { useState } from "react";
 
 export default function Stock({ initialStocks }: { initialStocks: any[] }) {
   const [stocks, setStocks] = useState<any[]>(initialStocks);
-  console.log(stocks);
   return (
     <div className="p-4 border-gray-300  border-l-2 ">
   

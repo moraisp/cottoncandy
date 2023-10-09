@@ -4,6 +4,7 @@ import { SubmitButton } from "@/utils/submit";
 import { Prisma } from "@prisma/client";
 import Stock from "./stock";
 import set from "lodash/set";
+import { v4 as uuidv4 } from 'uuid';
 
 export default function NewProduct() {
   async function create(formData: FormData) {
@@ -40,8 +41,10 @@ export default function NewProduct() {
     await prisma.product.create({
       data: {
         name: data.name,
+        guid: uuidv4(),
         code: data.code,
         price: Number(data.price),
+        discount: Number(data.discount),
         description: data.description,
         ProductStock: {
           createMany: {
@@ -92,6 +95,16 @@ export default function NewProduct() {
               <label className="font-medium">Preço</label>
               <input
                 name="price"
+                type="number"
+                step={0.01}
+                required
+                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
+              />
+            </div>
+            <div>
+              <label className="font-medium">Desconto</label>
+              <input
+                name="discount"
                 type="number"
                 step={0.01}
                 required

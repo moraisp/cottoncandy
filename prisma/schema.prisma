@@ -14,10 +14,13 @@ datasource db {
 
 model Product {
   id          Int     @id @default(autoincrement())
+  guid        String  @unique
   name        String
   description String?
   code        String  @unique
+
   price       Float
+  discount    Float?
 
   validUntil DateTime?
 

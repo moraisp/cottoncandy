@@ -1,10 +1,12 @@
 -- CreateTable
 CREATE TABLE "Product" (
     "id" SERIAL NOT NULL,
+    "guid" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
     "code" TEXT NOT NULL,
     "price" DOUBLE PRECISION NOT NULL,
+    "discount" DOUBLE PRECISION,
     "validUntil" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -38,6 +40,9 @@ CREATE TABLE "ProductStock" (
 
     CONSTRAINT "ProductStock_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Product_guid_key" ON "Product"("guid");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Product_code_key" ON "Product"("code");

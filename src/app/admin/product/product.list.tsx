@@ -35,9 +35,7 @@ export default async function ProductList({
             <tr>
               <th className="py-3 pr-6">id</th>
               <th className="py-3 pr-6">nome</th>
-              <th className="py-3 pr-6">descrição</th>
-              <th className="py-3 pr-6">data</th>
-              <th className="py-3 pr-6">status</th>
+              <th className="py-3 pr-6">código</th>
               <th className="py-3 pr-6">preço</th>
               <th className="py-3 pr-6"></th>
             </tr>
@@ -48,21 +46,30 @@ export default async function ProductList({
                 <td className="pr-6 py-4 whitespace-nowrap">{item.id}</td>
                 <td className="pr-6 py-4 whitespace-nowrap">{item.name}</td>
                 <td className="pr-6 py-4 whitespace-nowrap">
-                  {item.description}
-                </td>
-                <td className="pr-6 py-4 whitespace-nowrap">
-                  {item.createdAt.toLocaleString()}
+                  {item.code}
                 </td>
                 <td className="pr-6 py-4 whitespace-nowrap">
                   R${(item.price).toFixed(2)}
                 </td>
                 <td className="text-right whitespace-nowrap">
                   <Link
-                    href={`/admin/product/${item.id}`}
+                    href={`/admin/product/${item.id}/edit`}
                     className="py-1.5 px-3 text-gray-600 hover:text-gray-500 duration-150 hover:bg-gray-50 border rounded-lg"
                   >
                     Editar
                   </Link>
+                  <Link
+                    href={`/admin/product/${item.id}/view`}
+                    className="py-1.5 px-3 text-gray-600 hover:text-gray-500 duration-150 hover:bg-gray-50 border rounded-lg"
+                  >
+                    Vizualizar
+                  </Link>
+                  <button
+                    type="button"
+                    className="py-1.5 px-3 text-gray-600 hover:text-gray-500 duration-150 hover:bg-gray-50 border rounded-lg"
+                  >
+                    Vizualizar
+                  </button>
                 </td>
               </tr>
             ))}

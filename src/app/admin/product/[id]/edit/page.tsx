@@ -108,7 +108,7 @@ export default async function NewProduct({
         <form action={edit} className="space-y-5">
           <div className="flex flex-col items-center gap-y-5 gap-x-6 [&>*]:w-full sm:flex-row">
             <div>
-              <label className="font-medium">Nome</label>
+              <label className="font-medium">Nomes</label>
               <input
                 name="name"
                 type="text"
@@ -144,7 +144,7 @@ export default async function NewProduct({
             </div>
           <div>
             <label className="font-medium">Imagem</label>
-            <div className="items-start gap-1 md:flex">
+            <div className="items-start gap-1 flex">
               {product?.ProductImage.map((image) => (
                 <div className="relative" key={image.id.toString()}>
                   <input
