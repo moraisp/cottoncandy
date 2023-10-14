@@ -1,0 +1,3 @@
+[submodule "cottoncandy.db"]
+	path = cottoncandy.db
+	url = git@github.com:moraisp/cottoncandy.db.git
